@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 
 	"github.com/blueambertech-demos/xrp-blockchain-viewer/api"
@@ -14,7 +15,12 @@ func main() {
 	flag.StringVar(&serverAddress, "sa", "https://s.altnet.rippletest.net:51234", "")
 	flag.Parse()
 
-	ledger.SetMemoryStore(bytestore.NewStore())
+	exitCtx, canc := context.WithCancel(context.Background())
+	defer canc()
+	ledger.SetMemoryStore(exitCtx, bytestore.NewStore())
 	r := gin.Default()
+	api.XRPNetAddress = serverAddress
 	api.RegisterHandlers(r)
+
+	r.Run(":7770")
 }

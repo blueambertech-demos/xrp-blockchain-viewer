@@ -20,7 +20,7 @@ func handleLedgerValidatedInfo(ctx *gin.Context) {
 		ctx.JSON(500, ctx.Errors.JSON())
 		return
 	}
-	ctx.JSON(200, ledgerInf)
+	ctx.String(200, string(ledgerInf))
 }
 
 func handleLedgerClosedInfo(ctx *gin.Context) {
@@ -30,7 +30,7 @@ func handleLedgerClosedInfo(ctx *gin.Context) {
 		ctx.JSON(500, ctx.Errors.JSON())
 		return
 	}
-	ctx.JSON(200, ledgerInf)
+	ctx.String(200, string(ledgerInf))
 }
 
 func handleLedgerCurrentInfo(ctx *gin.Context) {
@@ -40,5 +40,5 @@ func handleLedgerCurrentInfo(ctx *gin.Context) {
 		ctx.JSON(500, ctx.Errors.JSON())
 		return
 	}
-	ctx.JSON(200, ledgerInf)
+	ctx.String(200, string(ledgerInf))
 }

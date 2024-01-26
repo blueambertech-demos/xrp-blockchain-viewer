@@ -1,6 +1,7 @@
 package ledger
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 var xrpTestNet = "https://s.altnet.rippletest.net:51234"
 
 func TestMain(m *testing.M) {
-	SetMemoryStore(&mock.Store{})
+	SetMemoryStore(context.Background(), &mock.Store{})
 	os.Exit(m.Run())
 }
 
@@ -20,8 +21,8 @@ func TestInfoValidated(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if len(response.Result.Ledger.LedgerIndex) == 0 {
-		t.Error("Data inside the ledger response missing")
+	if len(response) == 0 {
+		t.Error("ledger response empty")
 	}
 }
 
@@ -31,8 +32,8 @@ func TestInfoClosed(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if len(response.Result.Ledger.LedgerIndex) == 0 {
-		t.Error("Data inside the ledger response missing")
+	if len(response) == 0 {
+		t.Error("ledger response empty")
 	}
 }
 
@@ -42,8 +43,8 @@ func TestInfoCurrent(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	if len(response.Result.Ledger.LedgerIndex) == 0 {
-		t.Error("Data inside the ledger response missing")
+	if len(response) == 0 {
+		t.Error("ledger response empty")
 	}
 }
 

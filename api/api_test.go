@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,7 +16,7 @@ import (
 
 func TestMain(m *testing.M) {
 	XRPNetAddress = "https://s.altnet.rippletest.net:51234"
-	ledger.SetMemoryStore(&mock.Store{})
+	ledger.SetMemoryStore(context.Background(), &mock.Store{})
 	os.Exit(m.Run())
 }
 

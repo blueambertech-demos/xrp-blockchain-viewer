@@ -1,7 +1,8 @@
 package ledger
 
 import (
-	"encoding/json"
+	"context"
+	"time"
 
 	"github.com/blueambertech-demos/xrp-blockchain-viewer/pkg/httputil"
 )
@@ -16,15 +17,26 @@ const (
 	Validated LedgerIndexType = "validated"
 	Closed    LedgerIndexType = "closed"
 	Current   LedgerIndexType = "current"
+
+	cacheExpirySecs = 5
 )
 
-var storage MemoryStore
+var (
+	storage         MemoryStore
+	cancellationCtx context.Context
+)
 
-func SetMemoryStore(store MemoryStore) {
+// SetMemoryStore sets the memory store to use to cache data retrieved from the ledger along with a context that the store
+// can use to monitor cancellation requests
+func SetMemoryStore(ctx context.Context, store MemoryStore) {
 	storage = store
+	cancellationCtx = ctx
 }
 
-func Info(serverAddr string, idxType LedgerIndexType) (*LedgerInfoResponse, error) {
+// Info retrieves ledger information from a specified ledger type (either Validated, Closed or Current)
+// at the specified address. This func will attempt to use cached data in the store, if cached data does not
+// exist it will be retrieved from the XRP API and the cache will be updated.
+func Info(serverAddr string, idxType LedgerIndexType) ([]byte, error) {
 	key := "ledger.info." + string(idxType)
 	b, ok := storage.GetData(key)
 	if !ok {
@@ -37,9 +49,9 @@ func Info(serverAddr string, idxType LedgerIndexType) (*LedgerInfoResponse, erro
 		if err != nil {
 			return nil, err
 		}
-		storage.SetData(key, b)
+		storage.SetData(cancellationCtx, key, b, time.Now().Unix()+cacheExpirySecs)
 	}
-	return buildResponse(b)
+	return b, nil
 }
 
 func info(serverAddr string, params []interface{}) ([]byte, error) {
@@ -53,13 +65,4 @@ func info(serverAddr string, params []interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return j, nil
-}
-
-func buildResponse(b []byte) (*LedgerInfoResponse, error) {
-	var response LedgerInfoResponse
-	err := json.Unmarshal(b, &response)
-	if err != nil {
-		return nil, err
-	}
-	return &response, nil
 }
