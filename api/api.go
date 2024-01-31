@@ -8,9 +8,10 @@ import (
 var XRPNetAddress string
 
 func RegisterHandlers(e *gin.Engine) {
-	e.GET("/ledger/validated/info", handleLedgerValidatedInfo)
-	e.GET("/ledger/closed/info", handleLedgerClosedInfo)
-	e.GET("/ledger/current/info", handleLedgerCurrentInfo)
+	lGrp := e.Group("/ledger")
+	lGrp.GET("/validated/info", handleLedgerValidatedInfo)
+	lGrp.GET("/closed/info", handleLedgerClosedInfo)
+	lGrp.GET("/current/info", handleLedgerCurrentInfo)
 }
 
 func handleLedgerValidatedInfo(ctx *gin.Context) {

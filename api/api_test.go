@@ -27,7 +27,7 @@ func TestRegisterHandlers(t *testing.T) {
 
 func TestLedgerValidatedInfo(t *testing.T) {
 	ctx, _, w := ginTestSetup()
-	mockJsonPost(ctx)
+	mockJson(ctx, "POST")
 	handleLedgerValidatedInfo(ctx)
 	resp := w.Result()
 	if resp.StatusCode != http.StatusOK {
@@ -46,7 +46,7 @@ func TestLedgerValidatedInfo(t *testing.T) {
 
 func TestLedgerClosedInfo(t *testing.T) {
 	ctx, _, w := ginTestSetup()
-	mockJsonPost(ctx)
+	mockJson(ctx, "POST")
 	handleLedgerClosedInfo(ctx)
 	resp := w.Result()
 	if resp.StatusCode != http.StatusOK {
@@ -65,7 +65,7 @@ func TestLedgerClosedInfo(t *testing.T) {
 
 func TestLedgerCurrentInfo(t *testing.T) {
 	ctx, _, w := ginTestSetup()
-	mockJsonPost(ctx)
+	mockJson(ctx, "POST")
 	handleLedgerCurrentInfo(ctx)
 	resp := w.Result()
 	if resp.StatusCode != http.StatusOK {
@@ -95,7 +95,7 @@ func ginTestSetup() (*gin.Context, *gin.Engine, *httptest.ResponseRecorder) {
 	return ctx, e, w
 }
 
-func mockJsonPost(c *gin.Context) {
-	c.Request.Method = "POST"
+func mockJson(c *gin.Context, m string) {
+	c.Request.Method = m
 	c.Request.Header.Set("Content-Type", "application/json")
 }
